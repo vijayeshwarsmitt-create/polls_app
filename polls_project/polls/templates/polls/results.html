@@ -1,0 +1,53 @@
+{% extends "polls/base.html" %}
+
+{% block title %}Results — {{ question.question_text }}{% endblock %}
+
+{% block content %}
+<section class="results-section">
+    <a href="{% url 'polls:index' %}" class="back-link">&larr; Back to polls</a>
+
+    <div class="results-card">
+        <h1 class="results-title">{{ question.question_text }}</h1>
+        <p class="results-subtitle">Results</p>
+
+        {% with total=question.choice_set.all %}
+        <ul class="results-list">
+            {% for choice in question.choice_set.all %}
+            {% widthratio choice.votes 1 1 as vote_count %}
+            <li class="results-item" style="animation-delay: {{ forloop.counter0 }}50ms">
+                <div class="results-item-header">
+                    <span class="results-choice-text">{{ choice.choice_text }}</span>
+                    <span class="results-choice-votes">{{ choice.votes }} vote{{ choice.votes|pluralize }}</span>
+                </div>
+                <div class="results-bar-track">
+                    <div class="results-bar-fill" data-votes="{{ choice.votes }}"></div>
+                </div>
+            </li>
+            {% endfor %}
+        </ul>
+        {% endwith %}
+
+        <div class="results-actions">
+            <a href="{% url 'polls:detail' question.id %}" class="btn-vote-again">Vote again</a>
+        </div>
+    </div>
+</section>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const bars = document.querySelectorAll(".results-bar-fill");
+        let maxVotes = 0;
+        bars.forEach(function (bar) {
+            const v = parseInt(bar.getAttribute("data-votes"), 10);
+            if (v > maxVotes) maxVotes = v;
+        });
+        bars.forEach(function (bar) {
+            const v = parseInt(bar.getAttribute("data-votes"), 10);
+            const pct = maxVotes > 0 ? (v / maxVotes) * 100 : 0;
+            setTimeout(function () {
+                bar.style.width = pct + "%";
+            }, 100);
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,32 @@
+{% extends "polls/base.html" %}
+
+{% block title %}Latest Polls{% endblock %}
+
+{% block content %}
+<section class="section-hero">
+    <h1 class="section-title">Latest Polls</h1>
+    <p class="section-subtitle">Cast your vote on the topics that matter</p>
+</section>
+
+{% if latest_question_list %}
+<div class="poll-grid">
+    {% for question in latest_question_list %}
+    <a href="{% url 'polls:detail' question.pk %}" class="poll-card"
+        style="animation-delay: {{ forloop.counter0 }}00ms">
+        <div class="poll-card-number">#{{ forloop.counter }}</div>
+        <h2 class="poll-card-title">{{ question.question_text }}</h2>
+        <div class="poll-card-meta">
+            <span class="poll-card-date">{{ question.pub_date|date:"M d, Y" }}</span>
+            <span class="poll-card-arrow">&rarr;</span>
+        </div>
+    </a>
+    {% endfor %}
+</div>
+{% else %}
+<div class="empty-state">
+    <div class="empty-icon">🗳️</div>
+    <h2>No polls available yet</h2>
+    <p>Check back soon — new polls are created all the time!</p>
+</div>
+{% endif %}
+{% endblock %}
